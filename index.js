@@ -36,8 +36,14 @@ const port = parseInt(process.env.PORT, 10) || 8000;
 
 // Set up the express app
 const app = express();
-// Log requests to the console.
-// app.use(logger('dev'));
+
+// set response headers
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,HEAD,OPTIONS,POST,PUT');
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+  next();
+});
 
 // Parse incoming requests data (https://github.com/expressjs/body-parser)
 app.use(bodyParser.urlencoded({ extended: true }));
