@@ -4,12 +4,17 @@
   "description": "api for bookly",
   "main": "index.js",
   "scripts": {
-    "build": "babel ./ -d build --ignore node_modules/ --presets=env",
+    "build": "babel ./ -d build --ignore node_modules/ --presets=env --source-maps",
     "prebuild": "rm -rf build/*",
     "start": "NODE_ENV=production node ./build/index.js",
     "prestart": "npm run build",
     "dev": "NODE_ENV=development babel-node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "babel": {
+    "presets": [
+      "env"
+    ]
   },
   "repository": {
     "type": "git",

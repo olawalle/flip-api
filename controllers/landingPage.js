@@ -95,4 +95,16 @@ export default {
       });
   },
 
+  getUsers(req, res) {
+    const promise = User.findOne().exec();
+    promise.then(users => res.status(200).send({
+      success: true,
+      users
+    }))
+    .catch(err => res.status(500).send({
+      success: false,
+      error: err
+    }))
+  }
+
 };

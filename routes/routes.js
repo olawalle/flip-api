@@ -12,6 +12,10 @@ const router = express.Router();
 // ========= Buyer Routes ========
 // signup route
 router.post('/user/signup', validateInput.signupInput, landingPage.signup);
+
+// Get Users
+router.get('/users', landingPage.getUsers);
+
 // router.post('/buyer/signin', validateInput.signInInput, buyers.signin);
 
 // // ===== Supplier Routes =====
