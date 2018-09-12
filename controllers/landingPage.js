@@ -96,7 +96,7 @@ export default {
   // },
 
   getUsers(req, res) {
-    const promise = User.findOne().exec();
+    const promise = User.find().exec();
     promise.then(users => res.status(200).send({
       success: true,
       users
