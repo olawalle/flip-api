@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 // import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
+// import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import User from '../models/User';
 
@@ -58,42 +58,42 @@ export default {
    * @param {any} res servers response
    * @return {void}
    */
-  signin(req, res) {
-    const { email, password } = req.body;
-    const promise = User.findOne({
-      email: email.trim().toLowerCase()
-    }).exec();
-    promise.then((user) => {
-      if (!user) {
-        return res.status(404).send({
-          error: 'Email is incorrect'
-        });
-      }
-      if (!bcrypt.compareSync(password, user.password)) {
-        return res.status(401).send({
-          error: 'Incorrect password'
-        });
-      }
-      if (user) {
-        const token = jwt.sign(
-          {
-            id: user._id
-          },
-          process.env.SECRET,
-          { expiresIn: 24 * 60 * 60 }
-        );
-        return res.status(201).send({
-          token,
-          message: `Welcome back ${user.firstname} ${user.lastname}`
-        });
-      }
-    })
-      .catch((error) => {
-        res.status(500).send({
-          error: error.message
-        });
-      });
-  },
+  // signin(req, res) {
+  //   const { email, password } = req.body;
+  //   const promise = User.findOne({
+  //     email: email.trim().toLowerCase()
+  //   }).exec();
+  //   promise.then((user) => {
+  //     if (!user) {
+  //       return res.status(404).send({
+  //         error: 'Email is incorrect'
+  //       });
+  //     }
+  //     if (!bcrypt.compareSync(password, user.password)) {
+  //       return res.status(401).send({
+  //         error: 'Incorrect password'
+  //       });
+  //     }
+  //     if (user) {
+  //       const token = jwt.sign(
+  //         {
+  //           id: user._id
+  //         },
+  //         process.env.SECRET,
+  //         { expiresIn: 24 * 60 * 60 }
+  //       );
+  //       return res.status(201).send({
+  //         token,
+  //         message: `Welcome back ${user.firstname} ${user.lastname}`
+  //       });
+  //     }
+  //   })
+  //     .catch((error) => {
+  //       res.status(500).send({
+  //         error: error.message
+  //       });
+  //     });
+  // },
 
   getUsers(req, res) {
     const promise = User.findOne().exec();
