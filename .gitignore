@@ -62,6 +62,6 @@ typings/
 
 # babel build
 build/
-
+api.http
 # vscode config
 .vscode/
