@@ -1,6 +1,6 @@
 import express from 'express';
 import validateInput from '../utils/validateInput';
-import landingPage from '../controllers/landingPage';
+import users from '../controllers/user';
 // import invoice from '../controllers/invoice';
 // import products from '../controllers/products';
 // import quotes from '../controllers/quotes';
@@ -11,12 +11,12 @@ import jwtVerify from '../utils/jwtVerify';
 const router = express.Router();
 // ========= Buyer Routes ========
 // signup route
-router.post('/user/signup', validateInput.signupInput, landingPage.signup);
+router.post('/user/signup', validateInput.signupInput, users.signup);
 
 // Get Users
-router.get('/users', landingPage.getUsers);
+router.get('/users', users.getUsers);
 
-// router.post('/buyer/signin', validateInput.signInInput, buyers.signin);
+router.post('/user/signin', validateInput.signInInput, users.signin);
 
 // // ===== Supplier Routes =====
 // router.post('/supplier/signup', validateInput.supplierSignupInput, suppliers.signup);
