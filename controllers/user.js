@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
 // import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
-// import bcrypt from 'bcrypt';
+import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import User from '../models/User';
+import { create } from 'domain';
 
 dotenv.config();
 
@@ -94,10 +95,53 @@ export default {
       }
     })
       .catch((error) => {
-        res.status(500).send({
-          error: error.message
+        console.log(error);
+        
+        return res.status(500).send({
+          error,
+          success: false,
+          message: 'Internal Server Error'
         });
       });
+  },
+
+  async createAdmin(req, res) {
+    const { email, password, fullname } = req.body;
+    try {
+        const admin = await User.findOne({
+        email,
+        isAdmin: true
+      }).exec();
+      if (!admin) {
+        const newAdmin = new User({
+          email,
+          fullname,
+          password,
+          isAdmin: true
+        })
+        const createdAdmin = await newAdmin.save();
+        const token = jwt.sign({
+          id: createdAdmin._id,
+          name: create.fullname,
+        })
+        return res.status(201).send({
+          success: true,
+          token,
+          message: `Admin with email: ${createdAdmin.email} successfully created`
+        })
+      }
+      return res.status(409).send({
+        success: false,
+        message: `Admin with that email already exists`
+      })
+    }
+    catch(error) {
+      return res.status(500).send({
+        success: false,
+        error,
+        message: 'Internal Server Error'
+      })
+    }
   },
 
   getUsers(req, res) {
@@ -114,7 +158,7 @@ export default {
 
   async getOneUser(req, res) {
     try {
-      const promise = User.findById(req.params.id).exec
+      const promise = User.findById(req.params.id, 'phone fullname class').exec()
       const user = await promise;
       if(user) {
         return res.status(200).send({

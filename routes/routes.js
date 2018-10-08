@@ -1,26 +1,44 @@
 import express from 'express';
 import validateInput from '../utils/validateInput';
-import users from '../controllers/user';
 // import invoice from '../controllers/invoice';
 // import products from '../controllers/products';
 // import quotes from '../controllers/quotes';
 // import receipts from '../controllers/receipts';
-// import suppliers from '../controllers/suppliers';
+import subject from '../controllers/subject';
 import jwtVerify from '../utils/jwtVerify';
+import user from '../controllers/user';
+
+const { hasToken, isAdmin } = jwtVerify;
 
 const router = express.Router();
-// ========= Buyer Routes ========
+// ========= User Routes ========
+
 // signup route
-router.post('/user/signup', validateInput.signupInput, users.signup);
+router.post('/user/signup', validateInput.signupInput, user.signup);
 
 // Get Users
-router.get('/users', users.getUsers);
+router.get('/users', user.getUsers);
 
-router.post('/user/signin', validateInput.signInInput, users.signin);
+// Signin  Route
+router.post('/user/signin', validateInput.signInInput, user.signin);
 
-// // ===== Supplier Routes =====
-// router.post('/supplier/signup', validateInput.supplierSignupInput, suppliers.signup);
-// router.post('/supplier/signin', validateInput.signInInput, suppliers.signin);
+// Create Admin
+router.post('/user/admin', validateInput.createAdmin, hasToken, isAdmin, user.createAdmin);
+
+// Get One User
+router.get('/user/:id', hasToken, isAdmin, user.getOneUser);
+
+
+// ===== Subject Routes =====
+
+// Create Subject
+router.post('/subject', validateInput.subjectInput, hasToken, isAdmin, subject.createSubject);
+
+// Get All Subjects
+router.get('/subjects', hasToken, isAdmin, subject.getAllSubjects);
+
+// Get Subjects By class
+router.get('/subject/class/:class', hasToken, subject.getSubjectByClass);
 
 // // ===== Invoice Routes =====
 // router.post('/invoice', jwtVerify.hasToken, validateInput.invoiceInput, invoice.createInvoice);

@@ -1,13 +1,15 @@
 import mongoose from "mongoose";
 import Topic from "../models/Topic";
+import Subject from "../models/Subjects";
 
 mongoose.Promise = global.Promise;
 
 export default {
-  createTopic(req, res) {
+  async createTopic(req, res) {
     const { className, title, access, video, subject, status, article } = req.body;
 
-    const topic = new Topic({
+    try {
+      const topic = new Topic({
       author: req.decoded.name,
       class: className,
       subject,
@@ -18,13 +20,22 @@ export default {
       'article.title': article && article.title ? article.title : null,
       'article.content': article && article.content ? article.content : null,
       isPublished: status === 'publish' ? true : false
-    });
-    topic.save().then((newTopic) => {
+      });
+      const newTopic = await topic.save();
+      const subject = await Subject.findOneAndUpdate({
+        name: newTopic.subject,
+        class: newTopic.class
+      }, {
+        '$push': { 'topic': newTopic }
+      }).exec();
       return res.status(201).send({
         success: true,
-        message: `Topic ${newTopic.title} succesfully added to class${newSubject.className}; `
+        message: `Topic ${newTopic.title} for ${subject.name} succesfully added to class${subject.class}; `
       })
-    })
+    }
+    catch(error) {
+      return  res.stat
+    }
   },
 
   async getBySubject(req, res) {
@@ -47,7 +58,10 @@ export default {
     }
   },
 
-  async getSubjectDetails(req, res) {
-
-  }
+  // async getOneTopic(req, res) {
+  //   const { id } = req.params;
+  //   try {
+      
+  //   }
+  // }
 };

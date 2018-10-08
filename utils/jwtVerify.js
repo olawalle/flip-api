@@ -23,6 +23,32 @@ const jwtVerify = {
         message: 'You have to be loggedin first'
       });
     }
+  },
+  async isAdmin (req, res, next) {
+    try {
+      const promise = User.findById(req.decoded.id).exec();
+      const user = await promise;
+      if (user) {
+        if (user.isAdmin) {
+          return next();
+        }
+        return res.status(403).send({
+          success: false,
+          message: 'You are not authoried to access this page'
+        })
+      }
+      return res.status(404).send({
+        success: false,
+        message: 'User does not exist'
+      })
+    }
+    catch(error) {
+      res.status(500).send({
+        success: false,
+        message: 'Server Error',
+        error
+      })
+    }
   }
 };
 export default jwtVerify;

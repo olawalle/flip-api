@@ -24,7 +24,7 @@ dotenv.config();
 const configDB = require('./config/db');
 
 if (process.env.NODE_ENV === 'production') {
-  mongoose.connect(configDB.url_production, option); // connect to our production database
+  mongoose.connect(configDB.url); // connect to our production database
 } else if (process.env.NODE_ENV === 'test') {
   mongoose.connect(configDB.url_test); // connect to our test database
 } else {

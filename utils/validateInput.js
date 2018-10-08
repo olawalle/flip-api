@@ -38,57 +38,27 @@ const validateInput = {
   },
 
   /**
-   * @method supplierSignupInput
+   * @method subjectInput
    * @param {*} req
    * @param {*} res
    * @param {*} next
    * @returns {*} response
    */
-  // supplierSignupInput(req, res, next) {
-  //   const {
-  //     businessName, companyName, address, companyAlias, password, email, phone
-  //   } = req.body;
-  //   if (typeof (businessName) === 'undefined') {
-  //     return res.status(401).json({
-  //       message: 'Business name field must not be empty'
-  //     });
-  //   } if (typeof (password) === 'undefined') {
-  //     return res.status(401).send({
-  //       message: 'Password field must not be empty'
-  //     });
-  //   } if (typeof (email) === 'undefined') {
-  //     return res.status(401).send({
-  //       message: 'Email field must not be empty'
-  //     });
-  //   } if (!validator.isEmail(email)) {
-  //     return res.status(401).send({
-  //       message: 'Please put in a proper email address'
-  //     });
-  //   } if (typeof (companyName) === 'undefined') {
-  //     return res.status(401).send({
-  //       message: 'Company Name field must not be empty'
-  //     });
-  //   } if (typeof (phone) === 'undefined') {
-  //     return res.status(401).send({
-  //       message: 'Phone field must not be empty'
-  //     });
-  //   } if (!validator.isMobilePhone(phone, 'en-NG')) {
-  //     return res.status(401).send({
-  //       message: 'Phone must be a valid number'
-  //     });
-  //   }
-  //   if (typeof (companyAlias) === 'undefined') {
-  //     return res.status(401).send({
-  //       message: 'Company Alias field must not be empty'
-  //     });
-  //   }
-  //   if (typeof (address) === 'undefined') {
-  //     return res.status(401).send({
-  //       message: 'Address field must not be empty'
-  //     });
-  //   }
-  //   return next();
-  // },
+  subjectInput(req, res, next) {
+    const {
+      name, className,
+    } = req.body;
+    if (typeof (name) === 'undefined') {
+      return res.status(401).json({
+        message: 'Name field must not be empty'
+      });
+    } if (typeof (className) === 'undefined') {
+      return res.status(401).send({
+        message: 'ClassName field must not be empty'
+      });
+    }
+    return next();
+  },
 
   /**
    * @method signInInput
@@ -110,6 +80,42 @@ const validateInput = {
     } if (!validator.isMobilePhone(phone, 'en-NG')) {
       return res.status(401).send({
         message: 'Phone must be a valid number'
+      });
+    }
+    return next();
+  },
+
+  /**
+   * @method createAdmin
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @returns {*} response
+   */
+  createAdmin(req, res, next) {
+    const {
+      fullname, password, email
+    } = req.body;
+    if (typeof (fullname) === 'undefined') {
+      return res.status(401).json({
+        message: 'Fullname field must not be empty'
+      });
+    } if (typeof (password) === 'undefined') {
+      return res.status(401).send({
+        message: 'Password field must not be empty'
+      });
+    } if (typeof (req.body.class) === 'undefined') {
+      return res.status(401).send({
+        message: 'Class field must not be empty'
+      });
+    } 
+    if (typeof (email) === 'undefined') {
+      return res.status(401).send({
+        message: 'Email field must not be empty'
+      });
+    } if (!validator.isEmail(email, 'en-NG')) {
+      return res.status(401).send({
+        message: 'Email must be a valid number'
       });
     }
     return next();
