@@ -69,7 +69,7 @@ const validateInput = {
    */
   signInInput(req, res, next) {
     const { phone, password } = req.body;
-    if (typeof (phone) === 'undefined') {
+    if (!phone) {
       return res.status(401).json({
         message: 'Phone field must not be empty'
       });
