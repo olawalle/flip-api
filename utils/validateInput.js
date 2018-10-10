@@ -68,6 +68,7 @@ const validateInput = {
    * @returns {*} response
    */
   signInInput(req, res, next) {
+    console.log(req)
     const { phone, password } = req.body;
     if (typeof (phone) === 'undefined') {
       return res.status(401).json({
