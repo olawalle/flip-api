@@ -3,8 +3,8 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import User from '../models/User';
 import { create } from 'domain';
+import User from '../models/User';
 
 dotenv.config();
 
@@ -37,7 +37,7 @@ export default {
         fullname,
         class: className,
         password,
-        subjects: subjects ? { $push: { $each: subjects } } : []
+        subjects: subjects || []
       });
       user.save().then((newUser) => {
         const token = jwt.sign(
@@ -47,8 +47,7 @@ export default {
             class: newUser.class,
             isAdmin: newUser.isAdmin,
           },
-          process.env.SECRET,
-          {}
+          process.env.SECRET
         );
         return res.status(201).send({
           message: `Welcome ${fullname} - ${phone}`,
@@ -69,7 +68,7 @@ export default {
   signin(req, res) {
     const { phone, password } = req.body;
     const promise = User.findOne({
-      phone 
+      phone
     }).exec();
     promise.then((user) => {
       if (!user) {
@@ -87,11 +86,10 @@ export default {
           {
             id: user._id,
             name: user.fullname,
-            class: newUser.class,
-            isAdmin: newUser.isAdmin,
+            class: user.class,
+            isAdmin: user.isAdmin,
           },
-          process.env.SECRET,
-          {}
+          process.env.SECRET
         );
         return res.status(201).send({
           token,
@@ -101,7 +99,7 @@ export default {
     })
       .catch((error) => {
         console.log(error);
-        
+
         return res.status(500).send({
           error,
           success: false,
@@ -113,7 +111,7 @@ export default {
   async createAdmin(req, res) {
     const { email, password, fullname } = req.body;
     try {
-        const admin = await User.findOne({
+      const admin = await User.findOne({
         email,
         isAdmin: true
       }).exec();
@@ -123,29 +121,28 @@ export default {
           fullname,
           password,
           isAdmin: true
-        })
+        });
         const createdAdmin = await newAdmin.save();
         const token = jwt.sign({
           id: createdAdmin._id,
           name: create.fullname,
-        })
+        });
         return res.status(201).send({
           success: true,
           token,
           message: `Admin with email: ${createdAdmin.email} successfully created`
-        })
+        });
       }
       return res.status(409).send({
         success: false,
-        message: `Admin with that email already exists`
-      })
-    }
-    catch(error) {
+        message: 'Admin with that email already exists'
+      });
+    } catch (error) {
       return res.status(500).send({
         success: false,
         error,
         message: 'Internal Server Error'
-      })
+      });
     }
   },
 
@@ -155,37 +152,35 @@ export default {
       success: true,
       users
     }))
-    .catch(err => res.status(500).send({
-      success: false,
-      error: err
-    }))
+      .catch(err => res.status(500).send({
+        success: false,
+        error: err
+      }));
   },
 
   async getOneUser(req, res) {
     try {
-      const promise = User.findById(req.params.id, 'phone fullname class').exec()
+      const promise = User.findById(req.params.id, 'phone fullname class').exec();
       const user = await promise;
-      if(user) {
+      if (user) {
         return res.status(200).send({
           success: true,
           user
-        })
+        });
       }
       return res.status(404).send({
         success: false,
         message: 'User not found'
-      })
-      
-    }
-    catch(error) {
+      });
+    } catch (error) {
       res.status(500).send({
         success: false,
         error
-      })
+      });
     }
   },
 
-  async addUserSubject(req,res) {
+  async addUserSubject(req, res) {
     try {
       const { subjects } = req.body;
       const user = await User.findByIdAndUpdate(req.decoded.id, {
@@ -195,32 +190,28 @@ export default {
         success: true,
         message: 'subject successfully added',
         user
-      })
-    }
-    catch(error) {
+      });
+    } catch (error) {
       return res.status(500).send({
         message: 'Server Error',
         error
-      })
+      });
     }
-
   },
 
   async getUserSubjects(req, res) {
     try {
-      const { subjects } = req.body;
       const user = await User.findById().exec();
       return res.status(200).send({
         success: true,
         message: 'subject successfully added',
         subjects: user.subjects
-      })
-    }
-    catch(error) {
+      });
+    } catch (error) {
       return res.status(500).send({
         message: 'Server Error',
         error
-      })
+      });
     }
   }
 
