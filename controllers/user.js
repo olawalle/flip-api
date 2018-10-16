@@ -48,6 +48,7 @@ export default {
             isAdmin: newUser.isAdmin,
           },
           process.env.SECRET,
+          {}
         );
         return res.status(201).send({
           message: `Welcome ${fullname} - ${phone}`,
@@ -89,7 +90,8 @@ export default {
             class: newUser.class,
             isAdmin: newUser.isAdmin,
           },
-          process.env.SECRET
+          process.env.SECRET,
+          {}
         );
         return res.status(201).send({
           token,
