@@ -10,7 +10,7 @@ const validateInput = {
    */
   signupInput(req, res, next) {
     const {
-      fullname, password, phone, class, subjects
+      fullname, password, phone, subjects
     } = req.body;
     if (typeof (fullname) === 'undefined') {
       return res.status(401).json({
@@ -20,7 +20,7 @@ const validateInput = {
       return res.status(401).send({
         message: 'Password field must not be empty'
       });
-    } if (typeof (class) === 'undefined') {
+    } if (typeof (req.body.class) === 'undefined') {
       return res.status(401).send({
         message: 'Class field must not be empty'
       });
