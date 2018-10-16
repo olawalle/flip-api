@@ -96,13 +96,11 @@ export default {
         });
       }
     })
-      .catch((error) => {
-        return res.status(500).send({
-          error,
-          success: false,
-          message: 'Internal Server Error'
-        });
-      });
+      .catch(error => res.status(500).send({
+        error,
+        success: false,
+        message: 'Internal Server Error'
+      }));
   },
 
   async createAdmin(req, res) {
@@ -255,6 +253,10 @@ export default {
         error
       });
     }
+  },
+
+  async updateUsers(req, res) {
+    const { fullname, }
   }
 
 };

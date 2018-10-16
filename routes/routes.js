@@ -22,7 +22,7 @@ router.post('/user/signin', validateInput.signInInput, user.signin);
 router.post('/user/admin', validateInput.createAdmin, hasToken, user.createAdmin);
 
 // Admin Login
-router.post('/user/admin/sigin', validateInput.adminSigin, user.loginAdmin);
+router.post('/user/admin/signin', validateInput.adminSigin, user.loginAdmin);
 
 // Get One User
 router.get('/user/id/:id', hasToken, isAdmin, user.getOneUser);
