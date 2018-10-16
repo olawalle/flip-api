@@ -29,9 +29,7 @@ export default {
 
   async getAllSubjects(req, res) {
     try {
-      const promise = Subject.find({
-        classId: req.param.classId
-      });
+      const promise = Subject.find();
       const subjects = await promise;
       return res.status(200).send({
         success: true,

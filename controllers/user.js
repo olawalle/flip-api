@@ -19,7 +19,7 @@ export default {
    */
   signup(req, res) {
     const {
-      phone, fullname, className, password
+      phone, fullname, className, password, subjects
     } = req.body;
     const promise = User.findOne({
       phone: phone.trim().toLowerCase()
@@ -36,16 +36,18 @@ export default {
         phone: parseInt(phone, 10),
         fullname,
         class: className,
-        password
+        password,
+        subjects: subjects ? { $push: { $each: subjects } } : []
       });
       user.save().then((newUser) => {
         const token = jwt.sign(
           {
             id: newUser._id,
-            name: newUser.fullname
+            name: newUser.fullname,
+            class: newUser.class,
+            isAdmin: newUser.isAdmin,
           },
           process.env.SECRET,
-          { expiresIn: 24 * 60 * 60 }
         );
         return res.status(201).send({
           message: `Welcome ${fullname} - ${phone}`,
@@ -83,10 +85,11 @@ export default {
         const token = jwt.sign(
           {
             id: user._id,
-            name: user.fullname
+            name: user.fullname,
+            class: newUser.class,
+            isAdmin: newUser.isAdmin,
           },
-          process.env.SECRET,
-          { expiresIn: 24 * 60 * 60 }
+          process.env.SECRET
         );
         return res.status(201).send({
           token,
@@ -175,6 +178,45 @@ export default {
     catch(error) {
       res.status(500).send({
         success: false,
+        error
+      })
+    }
+  },
+
+  async addUserSubject(req,res) {
+    try {
+      const { subjects } = req.body;
+      const user = await User.findByIdAndUpdate(req.decoded.id, {
+        $push: { subjects: { $each: subjects } }
+      }).exec();
+      return res.status(200).send({
+        success: true,
+        message: 'subject successfully added',
+        user
+      })
+    }
+    catch(error) {
+      return res.status(500).send({
+        message: 'Server Error',
+        error
+      })
+    }
+
+  },
+
+  async getUserSubjects(req, res) {
+    try {
+      const { subjects } = req.body;
+      const user = await User.findById().exec();
+      return res.status(200).send({
+        success: true,
+        message: 'subject successfully added',
+        subjects: user.subjects
+      })
+    }
+    catch(error) {
+      return res.status(500).send({
+        message: 'Server Error',
         error
       })
     }

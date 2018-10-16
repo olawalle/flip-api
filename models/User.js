@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   isAdmin: { type: Boolean, default: false },
   password: { type: String, required: true },
   class: { type: String },
+  subjects: { type: Array },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date }
 });

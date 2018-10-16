@@ -10,7 +10,7 @@ const validateInput = {
    */
   signupInput(req, res, next) {
     const {
-      fullname, password, phone
+      fullname, password, phone, class, subjects
     } = req.body;
     if (typeof (fullname) === 'undefined') {
       return res.status(401).json({
@@ -20,7 +20,7 @@ const validateInput = {
       return res.status(401).send({
         message: 'Password field must not be empty'
       });
-    } if (typeof (req.body.class) === 'undefined') {
+    } if (typeof (class) === 'undefined') {
       return res.status(401).send({
         message: 'Class field must not be empty'
       });
@@ -32,6 +32,33 @@ const validateInput = {
     } if (!validator.isMobilePhone(phone, 'en-NG')) {
       return res.status(401).send({
         message: 'Phone must be a valid number'
+      });
+    } if (typeof (subjects) === 'undefined' || !Array.isArray(subjects)) {
+      return res.status(401).send({
+        message: 'subjects should be an array'
+      });
+    }
+    return next();
+  },
+
+  /**
+   * @method userSubject
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @returns {*} response
+   */
+  userSubject(req, res, next) {
+    const {
+      subjects,
+    } = req.body;
+    if (! Array.isArray(subjects)) {
+      return res.status(401).json({
+        message: 'subjects field should be an array'
+      });
+    } if (typeof (subjects) === '') {
+      return res.status(401).send({
+        message: 'subjects field is required'
       });
     }
     return next();

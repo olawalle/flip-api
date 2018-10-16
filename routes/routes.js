@@ -1,9 +1,5 @@
 import express from 'express';
 import validateInput from '../utils/validateInput';
-// import invoice from '../controllers/invoice';
-// import products from '../controllers/products';
-// import quotes from '../controllers/quotes';
-// import receipts from '../controllers/receipts';
 import subject from '../controllers/subject';
 import jwtVerify from '../utils/jwtVerify';
 import user from '../controllers/user';
@@ -27,6 +23,12 @@ router.post('/user/admin', validateInput.createAdmin, hasToken, isAdmin, user.cr
 
 // Get One User
 router.get('/user/:id', hasToken, isAdmin, user.getOneUser);
+
+// Add User Subjects
+router.post('/user/subject', validateInput.userSubject, hasToken, user.addUserSubject);
+
+// Getuser subjects
+router.get('/user/subjects', hasToken, user.getUserSubjects);
 
 
 // ===== Subject Routes =====

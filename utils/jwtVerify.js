@@ -26,21 +26,14 @@ const jwtVerify = {
   },
   async isAdmin (req, res, next) {
     try {
-      const promise = User.findById(req.decoded.id).exec();
-      const user = await promise;
-      if (user) {
-        if (user.isAdmin) {
+      const isAdmin = req.decoded.isAdmin
+      if (isAdmin) {
           return next();
         }
         return res.status(403).send({
           success: false,
-          message: 'You are not authoried to access this page'
+          message: 'You are not authorized to access this page'
         })
-      }
-      return res.status(404).send({
-        success: false,
-        message: 'User does not exist'
-      })
     }
     catch(error) {
       res.status(500).send({
