@@ -37,7 +37,7 @@ router.get('/user/subjects', hasToken, user.getUserSubjects);
 router.post('/subject', validateInput.subjectInput, hasToken, isAdmin, subject.createSubject);
 
 // Get All Subjects
-router.get('/subjects', hasToken, isAdmin, subject.getAllSubjects);
+router.get('/subjects', hasToken, subject.getAllSubjects);
 
 // Get Subjects By class
 router.get('/subject/class/:class', hasToken, subject.getSubjectByClass);
