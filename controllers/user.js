@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
-import { create } from 'domain';
 import User from '../models/User';
 
 dotenv.config();
@@ -19,7 +18,7 @@ export default {
    */
   signup(req, res) {
     const {
-      phone, fullname, className, password, subjects
+      phone, fullname, password, subjects
     } = req.body;
     const promise = User.findOne({
       phone: phone.trim().toLowerCase()
@@ -35,7 +34,7 @@ export default {
       const user = new User({
         phone: parseInt(phone, 10),
         fullname,
-        class: className,
+        class: req.body.class,
         password,
         subjects: subjects || []
       });
@@ -98,8 +97,6 @@ export default {
       }
     })
       .catch((error) => {
-        console.log(error);
-
         return res.status(500).send({
           error,
           success: false,
@@ -114,7 +111,7 @@ export default {
       const admin = await User.findOne({
         email,
         isAdmin: true
-      }).exec();
+      });
       if (!admin) {
         const newAdmin = new User({
           email,
@@ -124,9 +121,10 @@ export default {
         });
         const createdAdmin = await newAdmin.save();
         const token = jwt.sign({
+          email: createdAdmin.email,
           id: createdAdmin._id,
-          name: create.fullname,
-        });
+          isAdmin: createdAdmin.isAdmin
+        }, process.env.SECRET);
         return res.status(201).send({
           success: true,
           token,
@@ -183,7 +181,14 @@ export default {
   async addUserSubject(req, res) {
     try {
       const { subjects } = req.body;
-      const user = await User.findByIdAndUpdate(req.decoded.id, {
+      /* eslint-ignore-next-line */
+      const user = await User.findById(req.decoded.id).exec();
+      if (!user) {
+        return res.status(404).send({
+          message: 'user does not exist'
+        });
+      }
+      const update = await User.findByIdAndUpdate(req.decoded.id, {
         $push: { subjects: { $each: subjects } }
       }).exec();
       return res.status(200).send({
@@ -199,9 +204,46 @@ export default {
     }
   },
 
+  async loginAdmin(req, res) {
+    const { email, password } = req.body;
+    try {
+      const user = await User.findOne({
+        email,
+        isAdmin: true
+      });
+      if (user) {
+        if (!bcrypt.compareSync(password, user.password)) {
+          return res.status(409).send({
+            success: false,
+            message: 'Password is incorrect'
+          });
+        }
+        const token = jwt.sign({
+          email: user.email,
+          id: user._id,
+          isAdmin: user.isAdmin
+        }, process.env.SECRET);
+        return res.status(200).send({
+          success: true,
+          message: `welcome back ${user.email}`,
+          token
+        });
+      }
+      return res.status(404).send({
+        success: false,
+        message: 'Admin does not exist'
+      });
+    } catch (error) {
+      return res.status(500).send({
+        success: false,
+        message: 'Internal Server Error'
+      });
+    }
+  },
+
   async getUserSubjects(req, res) {
     try {
-      const user = await User.findById().exec();
+      const user = await User.findById(req.decoded.id).exec();
       return res.status(200).send({
         success: true,
         message: 'subject successfully added',

@@ -24,7 +24,7 @@ const validateInput = {
       return res.status(401).send({
         message: 'Class field must not be empty'
       });
-    } 
+    }
     if (typeof (phone) === 'undefined') {
       return res.status(401).send({
         message: 'Phone field must not be empty'
@@ -52,7 +52,7 @@ const validateInput = {
     const {
       subjects,
     } = req.body;
-    if (! Array.isArray(subjects)) {
+    if (!Array.isArray(subjects)) {
       return res.status(401).json({
         message: 'subjects field should be an array'
       });
@@ -73,13 +73,13 @@ const validateInput = {
    */
   subjectInput(req, res, next) {
     const {
-      name, className,
+      name
     } = req.body;
     if (typeof (name) === 'undefined') {
       return res.status(401).json({
         message: 'Name field must not be empty'
       });
-    } if (typeof (className) === 'undefined') {
+    } if (typeof (req.body.class) === 'undefined') {
       return res.status(401).send({
         message: 'ClassName field must not be empty'
       });
@@ -95,7 +95,7 @@ const validateInput = {
    * @returns {*} response
    */
   signInInput(req, res, next) {
-    console.log(req)
+    console.log(req);
     const { phone, password } = req.body;
     if (typeof (phone) === 'undefined') {
       return res.status(401).json({
@@ -108,6 +108,32 @@ const validateInput = {
     } if (!validator.isMobilePhone(phone, 'en-NG')) {
       return res.status(401).send({
         message: 'Phone must be a valid number'
+      });
+    }
+    return next();
+  },
+
+  /**
+   * @method adminSigin
+   * @param {*} req
+   * @param {*} res
+   * @param {*} next
+   * @returns {*} response
+   */
+  adminSigin(req, res, next) {
+    console.log(req);
+    const { email, password } = req.body;
+    if (typeof (email) === 'undefined') {
+      return res.status(401).json({
+        message: 'email field must not be empty'
+      });
+    } if (typeof (password) === 'undefined') {
+      return res.status(401).send({
+        message: 'Password field must not be empty'
+      });
+    } if (!validator.isEmail(email)) {
+      return res.status(401).send({
+        message: 'Provide a valid email'
       });
     }
     return next();
@@ -132,18 +158,13 @@ const validateInput = {
       return res.status(401).send({
         message: 'Password field must not be empty'
       });
-    } if (typeof (req.body.class) === 'undefined') {
-      return res.status(401).send({
-        message: 'Class field must not be empty'
-      });
-    } 
-    if (typeof (email) === 'undefined') {
+    } if (typeof (email) === 'undefined') {
       return res.status(401).send({
         message: 'Email field must not be empty'
       });
-    } if (!validator.isEmail(email, 'en-NG')) {
+    } if (!validator.isEmail(email)) {
       return res.status(401).send({
-        message: 'Email must be a valid number'
+        message: 'Email must be a valid email'
       });
     }
     return next();

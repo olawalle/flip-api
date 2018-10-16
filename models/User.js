@@ -3,13 +3,14 @@ import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
   fullname: { type: String },
-  phone: { type: Number, required: true , unique: true },
+  phone: { type: Number, unique: true },
   isAdmin: { type: Boolean, default: false },
   password: { type: String, required: true },
   class: { type: String },
   subjects: { type: Array },
   createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date }
+  updatedAt: { type: Date },
+  email: String
 });
 
 const SALT_WORK_FACTOR = 10;

@@ -19,10 +19,13 @@ router.get('/users', user.getUsers);
 router.post('/user/signin', validateInput.signInInput, user.signin);
 
 // Create Admin
-router.post('/user/admin', validateInput.createAdmin, hasToken, isAdmin, user.createAdmin);
+router.post('/user/admin', validateInput.createAdmin, hasToken, user.createAdmin);
+
+// Admin Login
+router.post('/user/admin/sigin', validateInput.adminSigin, user.loginAdmin);
 
 // Get One User
-router.get('/user/:id', hasToken, isAdmin, user.getOneUser);
+router.get('/user/id/:id', hasToken, isAdmin, user.getOneUser);
 
 // Add User Subjects
 router.post('/user/subject', validateInput.userSubject, hasToken, user.addUserSubject);

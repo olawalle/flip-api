@@ -24,23 +24,22 @@ const jwtVerify = {
       });
     }
   },
-  async isAdmin (req, res, next) {
+  async isAdmin(req, res, next) {
     try {
-      const isAdmin = req.decoded.isAdmin
+      const isAdmin = req.decoded.isAdmin;
       if (isAdmin) {
-          return next();
-        }
-        return res.status(403).send({
-          success: false,
-          message: 'You are not authorized to access this page'
-        })
-    }
-    catch(error) {
+        return next();
+      }
+      return res.status(403).send({
+        success: false,
+        message: 'You are not authorized to access this page'
+      });
+    } catch (error) {
       res.status(500).send({
         success: false,
         message: 'Server Error',
         error
-      })
+      });
     }
   }
 };
