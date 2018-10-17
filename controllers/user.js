@@ -156,7 +156,7 @@ export default {
 
   async getOneUser(req, res) {
     try {
-      const promise = User.findById(req.params.id, 'phone fullname class').exec();
+      const promise = User.findById(req.params.id, 'phone fullname class subjects').exec();
       const user = await promise;
       if (user) {
         return res.status(200).send({
