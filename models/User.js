@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   password: { type: String, required: true },
   class: { type: String },
   subjects: { type: Array },
+  notes: Array,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date },
   email: String

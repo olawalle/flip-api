@@ -25,7 +25,7 @@ router.post('/user/admin', validateInput.createAdmin, hasToken, user.createAdmin
 router.post('/user/admin/signin', validateInput.adminSigin, user.loginAdmin);
 
 // Get One User
-router.get('/user/id/:id', hasToken, isAdmin, user.getOneUser);
+router.get('/user/id/:id', hasToken, user.getOneUser);
 
 // Add User Subjects
 router.post('/user/subject', validateInput.userSubject, hasToken, user.addUserSubject);

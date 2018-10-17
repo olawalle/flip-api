@@ -6,8 +6,8 @@ const notesSchema = new mongoose.Schema({
   topicId: { type: String },
   content: { type: String },
   createdAt: { type: Date, default: Date.now },
-  updatedAt
+  updatedAt: Date
 });
 
 const Notes = mongoose.model('Notes', notesSchema);
-export default Notes
+export default Notes;

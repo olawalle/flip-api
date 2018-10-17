@@ -255,8 +255,8 @@ export default {
     }
   },
 
-  async updateUsers(req, res) {
-    const { fullname, }
-  }
+  // async updateUsers(req, res) {
+  //   const { fullname }
+  // }
 
 };
