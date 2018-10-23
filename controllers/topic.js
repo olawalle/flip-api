@@ -7,7 +7,7 @@ mongoose.Promise = global.Promise;
 export default {
   async createTopic(req, res) {
     const {
- className, title, access, video, subject, status, article 
+ className, title, access, video, subject, status, article
 } = req.body;
 
     try {
@@ -24,7 +24,7 @@ export default {
         isPublished: status === 'publish'
       });
       const newTopic = await topic.save();
-      const subject = await Subject.findOneAndUpdate({
+      const newSubject = await Subject.findOneAndUpdate({
         name: newTopic.subject,
         class: newTopic.class
       }, {
@@ -32,7 +32,7 @@ export default {
       }).exec();
       return res.status(201).send({
         success: true,
-        message: `Topic ${newTopic.title} for ${subject.name} succesfully added to class${subject.class}; `
+        message: `Topic ${newTopic.title} for ${newSubject.name} succesfully added to class${subject.class}; `
       });
     } catch (error) {
       return res.stat;

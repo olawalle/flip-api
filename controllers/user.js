@@ -186,7 +186,7 @@ export default {
           message: 'user does not exist'
         });
       }
-      const update = await User.findByIdAndUpdate(req.decoded.id, {
+      User.findByIdAndUpdate(req.decoded.id, {
         $push: { subjects: { $each: subjects } }
       }).exec();
       return res.status(200).send({

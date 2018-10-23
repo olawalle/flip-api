@@ -1,20 +1,24 @@
 import mongoose from 'mongoose';
 import Note from '../models/Notes';
+import User from '../models/User';
 
 mongoose.Promise = global.Promise;
 
 export default {
   async createNote(req, res) {
     const { title, content } = req.body;
-    const { authorId, topicId } = req.params; 
+    const { topicId } = req.query;
     try {
       const subject = new Note({
         title,
         content,
-        authorId,
+        authorId: req.decoded.id,
         topicId
       });
       const newNote = await subject.save();
+      User.findByIdAndUpdate(newNote.authorId, {
+        $push: { notes: newNote }
+      });
       return res.status(201).send({
         success: true,
         message: `Note ${newNote.name} succesfully added to class${newNote.class}; `
@@ -30,7 +34,7 @@ export default {
 
   async getAllNotes(req, res) {
     try {
-      const promise = Note.find().exec();
+      const promise = Note.find({ authorId: req.decoded.id }).exec();
       const subjects = await promise;
       return res.status(200).send({
         success: true,
@@ -44,21 +48,22 @@ export default {
     }
   },
 
-  async getNoteByClass(req, res) {
+  async getNoteByTopic(req, res) {
     try {
       const promise = Note.find({
-        class: req.params.class
+        topicId: req.params.topicId,
+        authorId: req.decoded.id
       }).exec();
-      const subjects = await promise;
-      if (subjects) {
+      const notes = await promise;
+      if (notes) {
         return res.status(200).send({
           success: true,
-          subjects
+          notes
         });
       }
       return res.status(404).send({
         success: false,
-        message: 'Class not found'
+        message: 'Topic not found'
       });
     } catch (error) {
       return res.status(500).send({

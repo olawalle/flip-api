@@ -3,6 +3,8 @@ import validateInput from '../utils/validateInput';
 import subject from '../controllers/subject';
 import jwtVerify from '../utils/jwtVerify';
 import user from '../controllers/user';
+import textbook from '../controllers/textbook';
+import notes from '../controllers/notes';
 
 const { hasToken, isAdmin } = jwtVerify;
 
@@ -44,6 +46,33 @@ router.get('/subjects', hasToken, subject.getAllSubjects);
 
 // Get Subjects By class
 router.get('/subject/class/:class', hasToken, subject.getSubjectByClass);
+
+
+// ===== Book Routes =====
+
+// Upload Book
+router.put('/upload', hasToken, isAdmin, textbook.handleFileUpload);
+
+// Get One Book
+router.get('/textbook/id/:id', hasToken, textbook.getBookById);
+
+// Get Books By Class
+router.get('/textbook/class/:class', hasToken, textbook.getAllBooksByClass);
+
+// Get Books By Subject
+router.get('/textbook/subject/:subject', textbook.getAllBooksBySubject);
+
+
+// ====== Notes Routes ======
+
+// Create Note
+router.post('/note', hasToken, notes.createNote);
+
+// Get All Notes
+router.get('/notes', hasToken, notes.getAllNotes);
+
+// Get All Notes By Topic
+router.get('/notes/topic/:topicId', hasToken, notes.getNoteByTopic);
 
 // // ===== Invoice Routes =====
 // router.post('/invoice', jwtVerify.hasToken, validateInput.invoiceInput, invoice.createInvoice);
