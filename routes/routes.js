@@ -52,7 +52,7 @@ router.get('/user/subjects', hasToken, user.getUserSubjects);
 router.get('/user/flips', hasToken, user.getUserFlips);
 
 // Add flip to user bookmarks
-router.post('/user/flips', hasToken, user.bookmarkFlip)
+router.post('/bookmark', hasToken, user.bookmarkFlip)
 
 
 
