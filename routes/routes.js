@@ -43,7 +43,7 @@ router.post('/flip', hasToken, flip.addFlip);
 router.get('/flip', hasToken, flip.getFlips);
 
 // search flips
-router.get('/flip/search', hasToken, flip.searchFlips)
+router.post('/flip/search', hasToken, flip.searchFlips)
 
 // Getuser subjects
 router.get('/user/subjects', hasToken, user.getUserSubjects);
