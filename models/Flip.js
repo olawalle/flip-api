@@ -7,7 +7,6 @@ const flipSchema = new mongoose.Schema({
   banner: { type: String },
   subject: { type: String },
   description: { type: String },
-  isBookmarked: { type: String },
   longDesc: { type: String },
   level: { type: String },
   // id: { type: String }

@@ -75,22 +75,29 @@ export default {
 
 
   async signin(req, res) {
-    const { phone, password } = req.body;
+    const { phone, password, email } = req.body;
 
     try {
-      const user = await User.findOne({
+
+      let user = null
+      phone ? user = await User.findOne({
         phone
-      });
+      }) : user = await User.findOne({
+        email
+      })
+
       if (!user) {
         return res.status(404).send({
-          error: 'Phone number is incorrect'
+          error: 'Phone number/email is wrong is incorrect'
         });
       }
-      if (!bcrypt.compareSync(password, user.password)) {
+
+      if (password && !bcrypt.compareSync(password, user.password)) {
         return res.status(401).send({
           error: 'Incorrect password'
         });
       }
+
       if (user) {
         
         const token = jwt.sign(
@@ -271,8 +278,7 @@ export default {
       }).exec();
       return res.status(200).send({
         success: true,
-        message: 'subject successfully added',
-        user
+        message: 'subject successfully added'
       });
     } catch (error) {
       return res.status(500).send({
@@ -335,32 +341,6 @@ export default {
     }
   },
 
-  async getFlips(req, res) {
-    const subjects = await Subject.find()
-    Flip.find().exec()
-    .then(flips => {
-      let resp = []
-      subjects.forEach((subject, i) => {
-        resp[i] = {
-          subject: subject.name,
-          flips: []
-        }
-      })
-
-      flips.forEach((flip) => {
-        let foundIndex = null
-        resp.find((subject, j) => {
-          subject.subject === flip.subject ? foundIndex = j : foundIndex = null
-          return subject.subject === flip.subject
-        }) && resp[foundIndex].flips.push(flip)
-      })
-      
-      res.status(200).send({ flips: resp })
-    })
-    .catch(err => {
-      res.status(400).send({err})
-    })
-  },
 
   async getUserFlips(req, res) {
     try {

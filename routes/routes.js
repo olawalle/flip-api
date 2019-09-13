@@ -40,7 +40,10 @@ router.post('/user/subject', validateInput.userSubject, hasToken, user.addUserSu
 router.post('/flip', hasToken, flip.addFlip);
 
 // get all flips
-router.get('/flip', hasToken, user.getFlips);
+router.get('/flip', hasToken, flip.getFlips);
+
+// search flips
+router.get('/flip/search', hasToken, flip.searchFlips)
 
 // Getuser subjects
 router.get('/user/subjects', hasToken, user.getUserSubjects);
@@ -50,6 +53,7 @@ router.get('/user/flips', hasToken, user.getUserFlips);
 
 // Add flip to user bookmarks
 router.post('/user/flips', hasToken, user.bookmarkFlip)
+
 
 
 // ===== Subject Routes =====
