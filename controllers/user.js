@@ -381,9 +381,9 @@ export default {
     const { flipId } = req.body
     try {
       let user = User.findOne(req.decoded.id)
-      // if (user.bookmarks.includes(flipId)) {
+      if (!user.bookmarks.includes(flipId)) {
         User.findByIdAndUpdate(req.decoded.id,
-          {$push: {bookmarks: req.body}},
+          {$push: {bookmarks: req.body.flipId}},
           function(err, doc) {
             if(err) {
               res.status(500).send({
@@ -399,12 +399,12 @@ export default {
             }
           }
         )
-      // } else {
-      //   res.status(400).send({
-      //     message: 'Flip already bookmarked',
-      //     error
-      //   });
-      // }
+      } else {
+        res.status(400).send({
+          message: 'Flip already bookmarked',
+          error
+        });
+      }
     } catch (err) {
       res.status(500).send({
         message: 'Server Error',
