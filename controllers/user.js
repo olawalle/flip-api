@@ -380,10 +380,12 @@ export default {
   bookmarkFlip(req, res) {
     const { flipId } = req.body
     try {
-      let user = User.findById(req.decoded.id)
+      let user = User.findByIdAndUpdate(req.decoded.id)
       if (!user.bookmarks.includes(flipId)) {
         User.findByIdAndUpdate(req.decoded.id,
-          {$push: {bookmarks: req.body.flipId}},
+          {$push: 
+            {bookmarks: flipId}
+          },
           function(err, doc) {
             if(err) {
               res.status(500).send({

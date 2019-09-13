@@ -36,6 +36,9 @@ router.get('/user/id/:id', hasToken, user.getOneUser);
 // Add User Subjects
 router.post('/user/subject', validateInput.userSubject, hasToken, user.addUserSubject);
 
+// Getuser subjects
+router.get('/user/subjects', hasToken, user.getUserSubjects);
+
 // Add User Subjects
 router.post('/flip', hasToken, flip.addFlip);
 
@@ -44,9 +47,6 @@ router.get('/flip', hasToken, flip.getFlips);
 
 // search flips
 router.post('/flip/search', hasToken, flip.searchFlips)
-
-// Getuser subjects
-router.get('/user/subjects', hasToken, user.getUserSubjects);
 
 // Get user Flips
 router.get('/user/flips', hasToken, user.getUserFlips);
