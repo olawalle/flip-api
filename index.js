@@ -28,10 +28,10 @@ if (process.env.NODE_ENV === 'production') {
 } else if (process.env.NODE_ENV === 'test') {
   mongoose.connect(configDB.url_test); // connect to our test database
 } else {
-  mongoose.createConnection(configDB.url);
+  mongoose.connect(configDB.url);
 }
 
-mongoose.connect(configDB.url);
+// mongoose.connect(configDB.url);
 const port = parseInt(process.env.PORT, 10) || 8000;
 
 // Set up the express app
