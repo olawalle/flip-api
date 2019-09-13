@@ -10,9 +10,9 @@ const validateInput = {
    */
   signupInput(req, res, next) {
     const {
-      fullname, password, phone, subjects
+      name, password, email, phone, subjects
     } = req.body;
-    if (typeof (fullname) === 'undefined') {
+    if (typeof (name) === 'undefined') {
       return res.status(401).json({
         message: 'Fullname field must not be empty'
       });
@@ -20,16 +20,16 @@ const validateInput = {
       return res.status(401).send({
         message: 'Password field must not be empty'
       });
-    } if (typeof (req.body.class) === 'undefined') {
+    } if (typeof (req.body.level) === 'undefined') {
       return res.status(401).send({
-        message: 'Class field must not be empty'
+        message: 'level field must not be empty'
       });
     }
-    if (typeof (phone) === 'undefined') {
+    if (typeof (phone) === 'undefined' && typeof (email) === 'undefined') {
       return res.status(401).send({
-        message: 'Phone field must not be empty'
+        message: 'Phone/email field must not be empty'
       });
-    } if (!validator.isMobilePhone(phone, 'en-NG')) {
+    } if (phone && !validator.isMobilePhone(phone, 'en-NG')) {
       return res.status(401).send({
         message: 'Phone must be a valid number'
       });
@@ -79,9 +79,9 @@ const validateInput = {
       return res.status(401).json({
         message: 'Name field must not be empty'
       });
-    } if (typeof (req.body.class) === 'undefined') {
+    } if (typeof (req.body.imageUrl) === 'undefined') {
       return res.status(401).send({
-        message: 'ClassName field must not be empty'
+        message: 'imageUrl field must not be empty'
       });
     }
     return next();
@@ -96,8 +96,8 @@ const validateInput = {
    */
   signInInput(req, res, next) {
     console.log(req);
-    const { phone, password } = req.body;
-    if (typeof (phone) === 'undefined') {
+    const { phone, password, email } = req.body;
+    if (phone && typeof (phone) === 'undefined') {
       return res.status(401).json({
         message: 'Phone field must not be empty'
       });
@@ -105,7 +105,11 @@ const validateInput = {
       return res.status(401).send({
         message: 'Password field must not be empty'
       });
-    } if (!validator.isMobilePhone(phone, 'en-NG')) {
+    } if (email && typeof (email) === 'undefined') {
+      return res.status(401).send({
+        message: 'Email field must not be empty'
+      });
+    } if (phone && !validator.isMobilePhone(phone, 'en-NG')) {
       return res.status(401).send({
         message: 'Phone must be a valid number'
       });

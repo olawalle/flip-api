@@ -26,6 +26,7 @@ const jwtVerify = {
   },
   async isAdmin(req, res, next) {
     try {
+      console.log(req.decoded)
       const isAdmin = req.decoded.isAdmin;
       if (isAdmin) {
         return next();

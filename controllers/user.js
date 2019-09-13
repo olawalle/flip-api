@@ -4,6 +4,8 @@ import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 import dotenv from 'dotenv';
 import User from '../models/User';
+import Flip from '../models/Flip'
+import Subject from '../models/Subjects';
 
 dotenv.config();
 
@@ -18,38 +20,44 @@ export default {
    */
   signup(req, res) {
     const {
-      phone, fullname, password, subjects
+      phone, name, email
     } = req.body;
-    const promise = User.findOne({
-      phone: phone.trim().toLowerCase()
-    }).exec();
+
+    let promise = null
+    // check if user is signing up with phone or email
+    if (phone) {
+      promise = User.findOne({
+        phone: phone.trim().toLowerCase()
+      }).exec();
+    } else if (email) {
+      promise = User.findOne({
+        email: email.trim().toLowerCase()
+      }).exec();
+    }
 
     promise.then((isPhone) => {
       if (isPhone) {
         return res.status(409).send({
-          error: 'user with that phone already exist'
+          error: 'user with that phone number/email already exists'
         });
       }
 
-      const user = new User({
-        phone: parseInt(phone, 10),
-        fullname,
-        class: req.body.class,
-        password,
-        subjects: subjects || []
-      });
+      const user = new User(
+        // phone: parseInt(phone, 10),
+        req.body
+      );
       user.save().then((newUser) => {
         const token = jwt.sign(
           {
             id: newUser._id,
-            name: newUser.fullname,
-            class: newUser.class,
+            name: newUser.name,
+            level: newUser.level,
             isAdmin: newUser.isAdmin,
           },
           process.env.SECRET
         );
         return res.status(201).send({
-          message: `Welcome ${fullname} - ${phone}`,
+          message: `Welcome ${name}`,
           token
         });
       })
@@ -64,12 +72,15 @@ export default {
    * @param {any} res servers response
    * @return {void}
    */
-  signin(req, res) {
+
+
+  async signin(req, res) {
     const { phone, password } = req.body;
-    const promise = User.findOne({
-      phone
-    }).exec();
-    promise.then((user) => {
+
+    try {
+      const user = await User.findOne({
+        phone
+      });
       if (!user) {
         return res.status(404).send({
           error: 'Phone number is incorrect'
@@ -81,26 +92,92 @@ export default {
         });
       }
       if (user) {
+        
         const token = jwt.sign(
           {
             id: user._id,
-            name: user.fullname,
-            class: user.class,
+            name: user.name,
             isAdmin: user.isAdmin,
           },
           process.env.SECRET
         );
-        return res.status(201).send({
-          token,
-          message: `Welcome back ${user.fullname}`
-        });
+
+        const allSubjects = await Subject.find().exec()
+        
+        Flip.find().exec()
+        .then(flips => {
+          let resp = []
+          user.subjects.forEach((subject, i) => {
+            resp[i] = {
+              subject: allSubjects.find(subj => JSON.stringify(subj._id) === JSON.stringify(subject)).name,
+              flips: []
+            }
+          })
+
+          flips.forEach((flip) => {
+            let foundIndex = null
+            resp.find((subject, j) => {
+              subject.subject === flip.subject ? foundIndex = j : foundIndex = null
+              return subject.subject === flip.subject
+            }) && resp[foundIndex].flips.push(flip)
+          })
+          
+          res.status(201).send({
+            success: true,
+            user,
+            token,
+            flips: resp 
+          });
+        })
       }
-    })
-      .catch(error => res.status(500).send({
-        error,
+
+    } catch (err) {
+      res.status(500).send({
+        err,
         success: false,
         message: 'Internal Server Error'
-      }));
+      })
+    }
+  },
+
+  async currentUser(req, res) {
+    try {
+      const user = await User.findById(req.decoded.id).exec()
+      if (user) {
+        const allSubjects = await Subject.find().exec()
+        
+        Flip.find().exec()
+        .then(flips => {
+          let resp = []
+          user.subjects.forEach((subject, i) => {
+            resp[i] = {
+              subject: allSubjects.find(subj => JSON.stringify(subj._id) === JSON.stringify(subject)).name,
+              flips: []
+            }
+          })
+
+          flips.forEach((flip) => {
+            let foundIndex = null
+            resp.find((subject, j) => {
+              subject.subject === flip.subject ? foundIndex = j : foundIndex = null
+              return subject.subject === flip.subject
+            }) && resp[foundIndex].flips.push(flip)
+          })
+          
+          res.status(201).send({
+            success: true,
+            user,
+            flips: resp 
+          });
+        })
+      }
+    } catch (err) {
+      res.status(500).send({
+        err,
+        success: false,
+        message: 'Internal Server Error'
+      })
+    }
   },
 
   async createAdmin(req, res) {
@@ -187,7 +264,10 @@ export default {
         });
       }
       User.findByIdAndUpdate(req.decoded.id, {
-        $push: { subjects: { $each: subjects } }
+        // $push: { subjects: { $each: subjects } }
+        $set: {
+          subjects: req.body.subjects
+        }
       }).exec();
       return res.status(200).send({
         success: true,
@@ -254,6 +334,104 @@ export default {
       });
     }
   },
+
+  async getFlips(req, res) {
+    const subjects = await Subject.find()
+    Flip.find().exec()
+    .then(flips => {
+      let resp = []
+      subjects.forEach((subject, i) => {
+        resp[i] = {
+          subject: subject.name,
+          flips: []
+        }
+      })
+
+      flips.forEach((flip) => {
+        let foundIndex = null
+        resp.find((subject, j) => {
+          subject.subject === flip.subject ? foundIndex = j : foundIndex = null
+          return subject.subject === flip.subject
+        }) && resp[foundIndex].flips.push(flip)
+      })
+      
+      res.status(200).send({ flips: resp })
+    })
+    .catch(err => {
+      res.status(400).send({err})
+    })
+  },
+
+  async getUserFlips(req, res) {
+    try {
+      const user = await User.findById(req.decoded.id).exec();
+
+      Flip.find().exec()
+      .then(flips => {
+        let resp = []
+        user.subjects.forEach((subject, i) => {
+          resp[i] = {
+            subject: subject.name,
+            flips: []
+          }
+        })
+
+        flips.forEach((flip) => {
+          let foundIndex = null
+          resp.find((subject, j) => {
+            subject.subject === flip.subject ? foundIndex = j : foundIndex = null
+            return subject.subject === flip.subject
+          }) && resp[foundIndex].flips.push(flip)
+        })
+
+        res.status(200).send({
+          success: true,
+          flips: resp 
+        });
+      })
+    } catch (error) {
+      res.status(500).send({
+        message: 'Server Error',
+        error
+      });
+    }
+  },
+
+  bookmarkFlip(req, res) {
+    const { flipId } = req.body
+    try {
+      let user = User.findOne(req.decoded.id)
+      // if (user.bookmarks.includes(flipId)) {
+        User.findByIdAndUpdate(req.decoded.id,
+          {$push: {bookmarks: req.body}},
+          function(err, doc) {
+            if(err) {
+              res.status(500).send({
+                message: 'An error occured',
+                err
+              });
+            } else {
+              //do stuff
+              res.status(201).send({
+                success: true,
+                message: 'Bookmark successfully added'
+              })
+            }
+          }
+        )
+      // } else {
+      //   res.status(400).send({
+      //     message: 'Flip already bookmarked',
+      //     error
+      //   });
+      // }
+    } catch (err) {
+      res.status(500).send({
+        message: 'Server Error',
+        error
+      });
+    }
+  }
 
   // async updateUsers(req, res) {
   //   const { fullname }

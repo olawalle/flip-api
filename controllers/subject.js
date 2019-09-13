@@ -5,17 +5,17 @@ mongoose.Promise = global.Promise;
 
 export default {
   async createSubject(req, res) {
-    const { name } = req.body;
+    const { name, imageUrl } = req.body;
 
     try {
       const subject = new Subject({
-        class: req.body.class,
-        name
+        name,
+        imageUrl
       });
       const newSubject = await subject.save();
       return res.status(201).send({
         success: true,
-        message: `Subject ${newSubject.name} succesfully added to class${newSubject.class}; `
+        message: `Subject ${newSubject.name} succesfully added; `
       });
     } catch (error) {
       return res.status(500).send({

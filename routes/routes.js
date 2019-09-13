@@ -5,6 +5,7 @@ import jwtVerify from '../utils/jwtVerify';
 import user from '../controllers/user';
 import textbook from '../controllers/textbook';
 import notes from '../controllers/notes';
+import flip from '../controllers/flip'
 
 const { hasToken, isAdmin } = jwtVerify;
 
@@ -20,6 +21,9 @@ router.get('/users', user.getUsers);
 // Signin  Route
 router.post('/user/signin', validateInput.signInInput, user.signin);
 
+
+router.get('/me', hasToken, user.currentUser);
+
 // Create Admin
 router.post('/user/admin', validateInput.createAdmin, hasToken, user.createAdmin);
 
@@ -32,8 +36,20 @@ router.get('/user/id/:id', hasToken, user.getOneUser);
 // Add User Subjects
 router.post('/user/subject', validateInput.userSubject, hasToken, user.addUserSubject);
 
+// Add User Subjects
+router.post('/flip', hasToken, flip.addFlip);
+
+// get all flips
+router.get('/flip', hasToken, user.getFlips);
+
 // Getuser subjects
 router.get('/user/subjects', hasToken, user.getUserSubjects);
+
+// Get user Flips
+router.get('/user/flips', hasToken, user.getUserFlips);
+
+// Add flip to user bookmarks
+router.post('/user/flips', hasToken, user.bookmarkFlip)
 
 
 // ===== Subject Routes =====
@@ -42,7 +58,7 @@ router.get('/user/subjects', hasToken, user.getUserSubjects);
 router.post('/subject', validateInput.subjectInput, hasToken, isAdmin, subject.createSubject);
 
 // Get All Subjects
-router.get('/subjects', hasToken, subject.getAllSubjects);
+router.get('/subjects', subject.getAllSubjects);
 
 // Get Subjects By class
 router.get('/subject/class/:class', hasToken, subject.getSubjectByClass);

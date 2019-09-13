@@ -2,16 +2,32 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
-  fullname: { type: String },
-  phone: { type: Number, unique: true },
+  // fullname: { type: String },
+  // phone: { type: Number, unique: true },
+  // isAdmin: { type: Boolean, default: false },
+  // password: { type: String, required: true },
+  // class: { type: String },
+  // subjects: { type: Array },
+  // notes: Array,
+  // createdAt: { type: Date, default: Date.now },
+  // updatedAt: { type: Date },
+  // email: String,
+
+
+  name: String,
+  // age: String,
+  phone: { type: String, unique: true },
   isAdmin: { type: Boolean, default: false },
-  password: { type: String, required: true },
-  class: { type: String },
-  subjects: { type: Array },
-  notes: Array,
+  email: { type: String, default: null },
+  password: String,
+  bookmarks: Array,
+  level: Number,
+  country: String,
+  subjects: Array,
+  subscription: String,
+  photo: String,
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date },
-  email: String
 });
 
 const SALT_WORK_FACTOR = 10;

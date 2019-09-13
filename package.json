@@ -9,6 +9,7 @@
     "start": "NODE_ENV=production node ./build/index.js",
     "prestart": "npm run build",
     "dev": "NODE_ENV=development nodemon --exec babel-node index.js",
+    "new": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "babel": {
