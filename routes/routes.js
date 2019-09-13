@@ -55,7 +55,7 @@ router.post('/user/flips', hasToken, user.bookmarkFlip)
 // ===== Subject Routes =====
 
 // Create Subject
-router.post('/subject', validateInput.subjectInput, hasToken, isAdmin, subject.createSubject);
+router.post('/subjects', validateInput.subjectInput, hasToken, isAdmin, subject.createSubject);
 
 // Get All Subjects
 router.get('/subjects', subject.getAllSubjects);
